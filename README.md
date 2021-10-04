@@ -28,7 +28,7 @@ The Project includes 2 files. The Arduino .ino file and the .hmi file for the Ne
 Although the display is high potent the "intelligence" is only written to the Arduino code. The Display is only used for show values and notice touch buttons. 
 Also the build in rtc with the battery is used for the Arduino time.   
 
-Manny thanks to the unbelivable Nextion libary "EasyNextionLibrary" from Seithan! The Libary was the key to deal with the touch "easy".
+Many thanks to the unbelivable Nextion libary "EasyNextionLibrary" from Seithan! The Libary was the key to deal with the touch "easy".
 
 ## Warning:
 If you try to implement the control unit to your heat pump, you should educated as electrician, you have to deal with 400V!
