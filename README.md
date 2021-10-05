@@ -18,7 +18,7 @@ I devoloped it for my defect Dimplex WI9TE control unit (Wärmepumpenmanager) bu
 
 ### Highlights:
 * touch display with differend pages to control and manipulate
-* some safety precautions (high/low preassure, icing, flow,  prof of plausibility of all temperatures, watchdog)
+* some safety precautions (high/low pressure, icing, flow,  prof of plausibility of all temperatures, watchdog)
 * Error memory with timestamp and state of all readings in EEPROM
 * RTC
 * heating curve offset and both hyseresis can be manipulated by the touch (heating curve is hardcoded)
