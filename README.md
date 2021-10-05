@@ -28,17 +28,17 @@ The Project includes 2 files. The Arduino .ino file and the .hmi file for the Ne
 Although the display is high potent the "intelligence" is only written to the Arduino code. The Display is only used for show values and notice touch buttons. 
 Also the build in rtc with the battery is used for the Arduino time.   
 
-Many thanks to the unbelivable Nextion libary "EasyNextionLibrary" from Seithan! The Libary was the key to deal with the touch "easy".
+Many thanks to Seithan for the unbelivable Nextion libary "EasyNextionLibrary"! The Libary was the key to deal with the touch "easy".
 
 ## Warning:
 If you try to implement the control unit to your heat pump, you should educated as electrician, you have to deal with 400V!
 This code ist in real operation since about 12 month and it work perfect. But! If you not know what you do, may be your compressor get damaged.
 
 ## Note: 
-At the moment most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
+At the moment GUI and most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
 
 ## Known issues:
-First I used for the pressure failurs hardware interrupts. But I had some EMC problems, so I comment it out and programmed the failure detecting (laborius) by hand around the switching moment of the contactor (causer of the emc problems).
+First I´ve used for the pressure failurs hardware interrupts. But I had some EMC problems, so I comment it out and programmed the failure detecting (laborius) by hand around the switching moment of the contactor (causer of the emc problems).
 The EMC problems are now fixed but the code work reliable. At the moment I´m not sure should I delete or reimplement the interrupts. 
 
 ****************************************************
@@ -47,3 +47,4 @@ the Free Software Foundation, either version 3 of the License, or (at your optio
 but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************
+https://github.com/Zeppelin500/ArduHeatPumpControl/blob/main/Pictures/Uebersicht.jpg
