@@ -61,4 +61,6 @@ You should have received a copy of the GNU General Public License along with thi
 
 ![Water](Pictures/Nextion_WW.png)
 
-![Water](Pictures/Nextion_home.png)
+![home](Pictures/Nextion_home.png)
+
+![wrong_messures](Pictures/Nextion_Fehlmessungen.png)
