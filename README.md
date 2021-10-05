@@ -47,4 +47,18 @@ the Free Software Foundation, either version 3 of the License, or (at your optio
 but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************
-https://github.com/Zeppelin500/ArduHeatPumpControl/blob/main/Pictures/Uebersicht.jpg
+
+
+![GUI Overview](Pictures/Uebersicht.jpg)
+
+![Heating](Pictures/Heizung.jpg)
+
+![Errors](Pictures/Fehlerspeicher.jpg)
+
+![systemcontrol](Pictures/Systemkontrolle.jpg)
+
+![Clock](Pictures/Nextion%20Uhr.png)
+
+![Water](Pictures/Nextion_WW.png)
+
+![Water](Pictures/Nextion_home.png)
