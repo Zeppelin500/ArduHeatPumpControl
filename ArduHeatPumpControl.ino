@@ -1,5 +1,6 @@
-
 /*
+# ArduHeatPumpControl
+
 ArduHeatPumpControl V1.0
 Arduino based heat pump control unit with touch screen by Zeppelin500
 
@@ -8,7 +9,7 @@ Main components are an Arduino Mega, a Nextion display NX3224K024_11 and onewire
 
 I devoloped it for my defect Dimplex WI9TE control unit (Wärmepumpenmanager) but it should be work in the most HPs with a thermostatic expansion valve.
 
-Programmed are until now only the basic usecases that I use:
+### Programmed are until now only the basic usecases that I use:
 * outside temperature controlled (heating curve)
 * Summer / Winter mode
 * direct underfloor heating without a mixer
@@ -16,9 +17,9 @@ Programmed are until now only the basic usecases that I use:
 * water heating is preffered before heating
 * electric provider blocking (EVU-Sperre)
 
-Highlights:
+### Highlights:
 * touch display with differend pages to control and manipulate
-* some safety precautions (high/low preassure, icing, flow,  prof of plausibility of all temperatures, watchdog)
+* some safety precautions (high/low pressure, icing, flow,  prof of plausibility of all temperatures, watchdog)
 * Error memory with timestamp and state of all readings in EEPROM
 * RTC
 * heating curve offset and both hyseresis can be manipulated by the touch (heating curve is hardcoded)
@@ -28,17 +29,17 @@ The Project includes 2 files. The Arduino .ino file and the .hmi file for the Ne
 Although the display is high potent the "intelligence" is only written to the Arduino code. The Display is only used for show values and notice touch buttons. 
 Also the build in rtc with the battery is used for the Arduino time.   
 
-Many thanks to the unbelivable Nextion libary "EasyNextionLibrary" from Seithan! The Libary was the key to deal with the touch "easy".
+Many thanks to Seithan for the unbelivable Nextion libary "EasyNextionLibrary"! The Libary was the key to deal with the touch "easy".
 
-Warning:
+## Warning:
 If you try to implement the control unit to your heat pump, you should educated as electrician, you have to deal with 400V!
-This code ist in real operation since about 12 month and it work perfect. But! If you not know what you do, may be your compressor get damaged.
+This code ist in real operation since about 10 month and it work perfect. But! If you not know what you do, may be your compressor get damaged.
 
-Note: 
-At the moment most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
+## Note: 
+At the moment GUI and most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
 
-Known issues:
-First I used for the presure failurs hardware interrupts. But I had some EMC problems, so I comment it out and programmed the failure detecting (laborius) by hand around the switching moment of the contactor (causer of the emc problems).
+## Known issues:
+First I´ve used for the pressure failurs hardware interrupts. But I had some EMC problems, so I comment it out and programmed the failure detecting (laborius) by hand around the switching moment of the contactor (causer of the emc problems).
 The EMC problems are now fixed but the code work reliable. At the moment I´m not sure should I delete or reimplement the interrupts. 
 
 ****************************************************
@@ -46,7 +47,7 @@ This program is free software: you can redistribute it and/or modify it under th
 the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-****************************************************
+***************************************************
  */
 
 #include <MemoryFree.h>           // Speicherüberwachung zur Fehlersuche
@@ -98,7 +99,7 @@ const int hdPin = 2;   // Hochdruckpressostat
 const int ndPin = 3;   // Niederdruckdruckpressostat
 
 // Pins für Ausgänge ------------------------------------------------------------
-const int brunnenPin = 26;    // Pin für Brunnenpumpe          active high  - Solid state Relais - direct
+const int brunnenPin = 26;    // Pin für Brunnenpumpe          active high  - solid state relais - direct
 const int hzPin = 27;         // Pin für Heizungsumwälzpumpe   active low   - cheap relais board - inrush current limiter               
 const int wwPin = 28;         // Pin für Warmwasserpumpe       active low   - cheap relais board - inrush current limiter  
 const int kompPin = 29;       // Pin für Kompressor            active low   - cheap relais board - contactor
@@ -209,6 +210,7 @@ volatile int zustand = 0; /*  Das Hauptprogramm ist als Zustandsautomat ausgefü
                         12=Spülen EVU Sperre
                         13=Spülen Systemkontrolle
                         14=Systemkontrolle
+                        15=Primärspülen
                         */
                         
 // Flags für die Zustände bzw. Anforderungen
@@ -433,13 +435,14 @@ void loop(){
           timerSwitchZustand = millis(); // Timer für nächsten Case zurücksetzen
           break;  
         }
-        else{ // sonst case 10, 10 min warten
-          zustand = 10;
+        else{ // sonst case 15, Primärkreis Spülen zur Vermeidung von Luftblasen und dann weiter in Standby
+          zustand = 15;
           timerSwitchZustand = millis(); // Timer für nächsten Case zurücksetzen
+          digitalWrite(brunnenPin, HIGH); // Brunnenpumpe einschalten
           if(TistRL > (TsollRLmO + 2)){  // Wenn Rücklauf signifikannt höher als RL soll, dann wird die Umwälzpumpe während dem Standby nicht benötigt.
             digitalWrite(hzPin, HIGH);    // Heizungspumpe ausschalten
-            digitalWrite(brunnenPin, LOW); // Brunnenpumpe auschalten  
           }
+
           break;     
         }
       }
@@ -453,12 +456,7 @@ void loop(){
            digitalWrite(brunnenPin, LOW); // Brunnenpumpe auschalten 
            break;         
         }
-      }   
-      if((millis() - timerSwitchZustand) > 16000){ // Brunnenpumpe Spülen um Luftblasen zu vermeiden
-        digitalWrite(brunnenPin, HIGH); // Brunnenpumpe einschalten     
-      }
-          
-
+      }            
       break;
 
     case 2:  // Spülen v. Kompressorstart Heizen, Brunnenpumpe und HeizungsPumpe sind bereits eingeschalten.
@@ -568,7 +566,7 @@ void loop(){
         timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
         break;       
       }      
-      if(TistRL > (TsollRLmO + hzHyst) && (millis() - timerSwitchZustand) > 60000){ // Ermitteln ob RL Sollwert pus Hysterese erreicht hat, wartezeit das nach WW bereitung RL wieder richtige Werte misst.
+      if(TistRL > (TsollRLmO + hzHyst) && (millis() - timerSwitchZustand) > 60000){ // Ermitteln ob RL Sollwert pus Hysterese erreicht hat, Wartezeit das nach WW Bereitung RL wieder richtige Werte misst.
         anfHZ = false;  // anforderung Heizung zurücksetzen
         }
       if(anfWW == true){ // WW Bereitung hat Priorität daher sofort umschalten auf WW bereiten  
@@ -707,7 +705,7 @@ void loop(){
         break;  
         
     case 11: // EVU Sperre 
-      if(evuSperre == false){  
+      if(evuSperre == false){  // Wenn das EVU Sperre Signal nicht mehr anliegt...
         zustand = 1;   
         timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen                         
         }
@@ -728,11 +726,19 @@ void loop(){
       }      
       break;     
     case 14:  ///Systemkontrolle            
+      break;  
+      
+    case 15:  // Spülen Primärkreis 
+      if((millis() - timerSwitchZustand) > 120000){
+        digitalWrite(brunnenPin, LOW); // BrunnenPumpe ausschalten
+        timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen 
+        zustand = 10; // Standby     
+      }   
       break;                  
 }  
 
 // Displaykommunikation  -----------------------------------------------------------------------------------------------------    
-  aktuelleSeite = myNex.currentPageId; // Store the currentPageId
+  aktuelleSeite = myNex.currentPageId; // Sorgt dafür, dass der Arduino weis auf welcher Seite das Display ist
   
 
   if((millis() - timer) > 1000){
@@ -859,7 +865,10 @@ void loop(){
           break;     
         case 14:
           myNex.writeStr("t12.txt", "Systemkontrolle");  
-          break;                                                                                                          
+          break;           
+        case 15:
+          myNex.writeStr("t12.txt", "Spuelen Primaerkreis");  
+          break;                                                                                                           
         } 
       }      
   
@@ -1099,7 +1108,10 @@ void loop(){
           break;     
         case 14:
           myNex.writeStr("t5.txt", "Systemkontrolle");  
-          break;                                                                                                          
+          break;      
+        case 15:
+          myNex.writeStr("t12.txt", "Spuelen Primaerkreis");  
+          break;                                                                                                               
         }                         
     }
     else if(aktuelleSeite == 8){  //  Zähler Fehlmessungen
