@@ -32,7 +32,7 @@ Many thanks to Seithan for the unbelivable Nextion libary "EasyNextionLibrary"! 
 
 ## Warning:
 If you try to implement the control unit to your heat pump, you should educated as electrician, you have to deal with 400V!
-This code ist in real operation since about 12 month and it work perfect. But! If you not know what you do, may be your compressor get damaged.
+This code ist in real operation since about 10 month and it work perfect. But! If you not know what you do, may be your compressor get damaged.
 
 ## Note: 
 At the moment GUI and most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
