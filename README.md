@@ -8,7 +8,7 @@ Main components are an Arduino Mega, a Nextion display NX3224K024_11 and onewire
 
 I´ve devoloped it for my defect Dimplex WI9TE control unit (Wärmepumpenmanager) but it should be work in the most HPs with a thermostatic expansion valve.
 
-### Programmed are until now only the basic usecases that I use:
+### Programmed are (only) the basic usecases that I use:
 * outside temperature controlled (heating curve)
 * Summer / Winter mode
 * direct underfloor heating without a mixer
