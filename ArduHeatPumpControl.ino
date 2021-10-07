@@ -566,7 +566,7 @@ void loop(){
         timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
         break;       
       }      
-      if(TistRL > (TsollRLmO + hzHyst) && (millis() - timerSwitchZustand) > 60000){ // Ermitteln ob RL Sollwert pus Hysterese erreicht hat, Wartezeit das nach WW Bereitung RL wieder richtige Werte misst.
+      if(TistRL > (TsollRLmO + hzHyst) && (millis() - timerSwitchZustand) > 120000){ // Ermitteln ob RL Sollwert pus Hysterese erreicht hat, Wartezeit das nach WW Bereitung RL wieder richtige Werte misst.
         anfHZ = false;  // anforderung Heizung zurücksetzen
         }
       if(anfWW == true){ // WW Bereitung hat Priorität daher sofort umschalten auf WW bereiten  
