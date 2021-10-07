@@ -6,7 +6,7 @@ Arduino based heat pump control unit with touch screen by Zeppelin500
 Developed for a water-water heat pump but also usable for a brine-water heat pump.
 Main components are an Arduino Mega, a Nextion display NX3224K024_11 and onewire DS18B20 sensors
 
-I devoloped it for my defect Dimplex WI9TE control unit (Wärmepumpenmanager) but it should be work in the most HPs with a thermostatic expansion valve.
+I´ve devoloped it for my defect Dimplex WI9TE control unit (Wärmepumpenmanager) but it should be work in the most HPs with a thermostatic expansion valve.
 
 ### Programmed are until now only the basic usecases that I use:
 * outside temperature controlled (heating curve)
