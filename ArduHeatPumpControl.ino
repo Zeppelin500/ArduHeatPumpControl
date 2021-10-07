@@ -439,7 +439,7 @@ void loop(){
           zustand = 15;
           timerSwitchZustand = millis(); // Timer für nächsten Case zurücksetzen
           digitalWrite(brunnenPin, HIGH); // Brunnenpumpe einschalten
-          if(TistRL > (TsollRLmO + 2)){  // Wenn Rücklauf signifikannt höher als RL soll, dann wird die Umwälzpumpe während dem Standby nicht benötigt.
+          if(TistRL > TsollRLmO){  // Wenn Rücklauf höher als RL soll, dann wird die Umwälzpumpe während dem Standby nicht benötigt.
             digitalWrite(hzPin, HIGH);    // Heizungspumpe ausschalten
           }
 
