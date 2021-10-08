@@ -1,6 +1,6 @@
 # ArduHeatPumpControl
 
-ArduHeatPumpControl V1.0
+ArduHeatPumpControl V1.0  
 Arduino based heat pump control unit with touch screen by Zeppelin500
 
 Developed for a water-water heat pump but also usable for a brine-water heat pump.
