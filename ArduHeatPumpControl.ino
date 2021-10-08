@@ -50,6 +50,8 @@ You should have received a copy of the GNU General Public License along with thi
 ***************************************************
  */
 
+// Attention: All temperature values and calculations are multiplied with 10. Because the display do only understand integers, no floats. e.g.: 12,3°C is 123  
+
 #include <MemoryFree.h>           // Speicherüberwachung zur Fehlersuche
 #include "EasyNextionLibrary.h"   // Include EasyNextionLibrary   
 
@@ -1318,7 +1320,7 @@ void sensorRefresh1(){  //stößt aktuallisierte Sensorwerte aus den OneWire Sen
     sensor6.requestTemperatures(); // Send the command to get temperatures 
 }
 void sensorRefresh2(){  //holt die aktuallisierten Sensorwerte aus den OneWire Sensoren
-    mTistVL = sensor1.getTempCByIndex(0) * 10;
+    mTistVL = sensor1.getTempCByIndex(0) * 10; // jeder Wert wird x 10 genommen, weil das Display keine Gleitkommazahlen verarbeiten kann.
     mTistA = sensor2.getTempCByIndex(0) * 10;
     mTistBrRL = sensor3.getTempCByIndex(0) * 10;
     mTistRL = sensor4.getTempCByIndex(0) * 10;
