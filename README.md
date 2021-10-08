@@ -1,6 +1,6 @@
 # ArduHeatPumpControl
 
-ArduHeatPumpControl V1.0
+ArduHeatPumpControl V1.0  
 Arduino based heat pump control unit with touch screen by Zeppelin500
 
 Developed for a water-water heat pump but also usable for a brine-water heat pump.
@@ -35,7 +35,7 @@ If you try to implement the control unit to your heat pump, you should educated 
 This code ist in real operation since about 10 month and it work perfect. But! If you not know what you do, may be your compressor get damaged.
 
 ## Note: 
-At the moment GUI and most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
+GUI and most comments are in german language. Because I wrote it for myself. If some interest, may I translate it sometimes.
 
 ## Known issues:
 First I´ve used for the pressure failurs hardware interrupts. But I had some EMC problems, so I comment it out and programmed the failure detecting (laborius) by hand around the switching moment of the contactor (causer of the emc problems).
