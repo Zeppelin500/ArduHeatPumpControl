@@ -1456,7 +1456,8 @@ void trigger14(){ // Systemkontrolle an
   else{
     digitalWrite(brunnenPin, LOW); // Brunnenpumpe ausschalten
     digitalWrite(wwPin, HIGH); // WW Pumpe ausschalten
-    digitalWrite(hzPin, HIGH); // Umwälzpumpe ausschalten    
+    digitalWrite(hzPin, HIGH); // Umwälzpumpe ausschalten  
+    digitalWrite(kompPin, HIGH); // Kompressor ausschalten  
     zustand = 14; // Systemkontrolle
     timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
   }
@@ -1468,7 +1469,12 @@ void trigger15(){ // Systemkontrolle aus
     digitalWrite(brunnenPin, LOW); // Brunnenpumpe ausschalten
     digitalWrite(wwPin, HIGH); // WW Pumpe ausschalten
     digitalWrite(hzPin, HIGH); // Umwälzpumpe ausschalten    
-    zustand = 0; // 
+    if(unresetfailure == true){
+      zustand = 9;
+    }
+    else{
+      zustand = 0; //
+    } 
     timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
   } 
 }
