@@ -213,6 +213,7 @@ volatile int zustand = 0; /*  Das Hauptprogramm ist als Zustandsautomat ausgefü
                         13=Spülen Systemkontrolle
                         14=Systemkontrolle
                         15=Primärspülen
+                        16=Pumpenüberlappung
                         */
                         
 // Flags für die Zustände bzw. Anforderungen
@@ -229,7 +230,7 @@ unsigned long standbyTime = 0; // Wartezeit im Standby (Sommer und Winter unters
 unsigned long timer ;             // Timer für das Display
 unsigned long timerSensorRefresh; // Timer zum Auslesen der Temperaturwerte
 unsigned long timerCalc;          // Timer zur Neuberechnung der aktuellen Solltemperaturen aus der Heizkurve
-unsigned long timerSwitchZustand; // Timer seit wann der aktuelle Zustand läuft.
+volatile unsigned long timerSwitchZustand; // Timer seit wann der aktuelle Zustand läuft.
 unsigned long timerTaktsperre;    // Timer für die Taktsperre
 unsigned long timerAnf;           // Timer zur Neuberechnung ob eine Warmwasseranforderung vorliegt
 unsigned long timerDim;           // Timer zum Dimmen des Displays nach einer eingestellten Zeit --> noch nicht programmiert.
@@ -334,8 +335,8 @@ void setup(){
   pinMode(hdPin, INPUT_PULLUP);  // Lege den Interruptpin als Inputpin mit Pullupwiderstand fest
   pinMode(ndPin, INPUT_PULLUP);
 
-  //attachInterrupt(digitalPinToInterrupt(hdpInterruptPin), hdFehler, RISING);
-  //attachInterrupt(digitalPinToInterrupt(ndpInterruptPin), ndFehler, RISING);
+  //attachInterrupt(digitalPinToInterrupt(hdPin), hdFehler, RISING);
+  //attachInterrupt(digitalPinToInterrupt(ndPin), ndFehler, RISING);
    
   pinMode(durchflussPin, INPUT);
   pinMode(evuPin, INPUT_PULLUP);
@@ -357,12 +358,12 @@ void setup(){
     standbyTime = 600000; // im Winter 10 Minuten
   }
 
-/*  if(digitalRead(hdpInterruptPin) == HIGH){  // Interuppt kommt nur bei RISING, daher muss einmal überprüft werden.
+/*  if(digitalRead(hdPin) == HIGH){  // Interuppt kommt nur bei RISING, daher muss einmal überprüft werden.
     zustand = 9;
     fehlercode = 3;
     fehlerspeichern();
     }  
-  if(digitalRead(ndpInterruptPin) == HIGH){
+  if(digitalRead(ndPin) == HIGH){
     zustand = 9;
     fehlercode = 2;
     fehlerspeichern();
@@ -379,6 +380,10 @@ void loop(){
 
   switch(zustand){
     case 0:  // Pumpentest nach neustart    
+      if(unresetfailure == true){
+        zustand = 9;
+        break;
+      }
       if((millis() - timerSwitchZustand) > 30000){ // nach 30 sec auf "Werte ermitteln" schalten 
         zustand = 1; 
         timerSwitchZustand = millis(); // Timer für nächsten Case zurücksetzen
@@ -624,8 +629,7 @@ void loop(){
       }   
       if(anfWW == false){
         if(anfHZ == true){
-          zustand = 5;
-          digitalWrite(wwPin, HIGH); // WW Pumpe ausschalten
+          zustand = 16;
           digitalWrite(hzPin, LOW); // HZ Pumpe einschalten  
           timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen   
           break;                       
@@ -636,7 +640,7 @@ void loop(){
           digitalWrite(wwPin, HIGH); // WW Pumpe ausschalten
           digitalWrite(hzPin, LOW); // Heizungspumpe einschalten
           timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
-          timerTaktsperre = millis();  // Timer für Taktserre zurückssetzen
+          timerTaktsperre = millis();  // Timer für Taktsperre zurückssetzen
           break;
           }
       }
@@ -688,7 +692,7 @@ void loop(){
 
       break;  
 
-    case 10: // 10 min warten
+    case 10: // Standby
       if(evuSperre == true){
         zustand = 11;
       }    
@@ -698,13 +702,12 @@ void loop(){
           timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
           break;    
       }
-      if(anfWW == true){ // WW Bereitung hat Priorität daher sofort umschalten auf WW bereiten  
-        zustand = 3;         
-        digitalWrite(brunnenPin, HIGH);    // Brunnen Pumpe einschalten   
-        digitalWrite(hzPin, HIGH);    // Umwälzpumpe ausschalten              
-        timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
+      if(anfWW == true){ // WW Bereitung erforderlich, springe in werte ermittelln  
+          zustand = 1;
+          digitalWrite(hzPin, LOW);    // Heizungspumpe Pumpe einschalten   
+          timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen
       }
-        break;  
+      break;  
         
     case 11: // EVU Sperre 
       if(evuSperre == false){  // Wenn das EVU Sperre Signal nicht mehr anliegt...
@@ -736,7 +739,23 @@ void loop(){
         timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen 
         zustand = 10; // Standby     
       }   
-      break;                  
+      break;   
+      
+    case 16:  // Pumpenüberlappung 
+      if((millis() - timerSwitchZustand) > 8000){       
+        digitalWrite(wwPin, HIGH); // WW Pumpe ausschalten
+        timerSwitchZustand = millis();  // Timer für nächsten Case zurücksetzen 
+        zustand = 5; // Heizen     
+      }  
+      if(hdpresostat == true){
+        hdFehler();
+        break;
+        }
+      if(ndpresostat == true){
+        ndFehler();
+        break;
+        }        
+      break;                       
 }  
 
 // Displaykommunikation  -----------------------------------------------------------------------------------------------------    
@@ -870,7 +889,10 @@ void loop(){
           break;           
         case 15:
           myNex.writeStr("t12.txt", "Spuelen Primaerkreis");  
-          break;                                                                                                           
+          break;     
+        case 16:
+          myNex.writeStr("t12.txt", "Pumpenueberlappung");  
+          break;                                                                                                                 
         } 
       }      
   
@@ -1113,7 +1135,10 @@ void loop(){
           break;      
         case 15:
           myNex.writeStr("t12.txt", "Spuelen Primaerkreis");  
-          break;                                                                                                               
+          break;      
+        case 16:
+          myNex.writeStr("t12.txt", "Pumpenueberlappung");  
+          break;                                                                                                                     
         }                         
     }
     else if(aktuelleSeite == 8){  //  Zähler Fehlmessungen
